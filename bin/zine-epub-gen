@@ -1,0 +1,238 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const fs = require("fs");
+const path = require("path");
+const imgSize = require("image-size");
+const Epub = require("epub-gen");
+const cheerio = require("cheerio");
+const co = require("co");
+const _request = require('request');
+const request = require("co-request");
+const argv = require('optimist').argv;
+const outputPath = argv['o'];
+const lang = argv['l'] || 'zh-cn';
+
+const i18n = {
+	"zh-cn": {
+		"head_page": "扉页",
+		"copyright_page": "版权页",
+		"wrote": "[著]",
+		"copyright": "本书由作者用 Zine 制作发布, 版权归作者所有。<br>未经书面同意,不得以任何形式复制转载。",
+		"more_detail": "了解更多请访问"
+	},
+	"zh-tw": {
+		"head_page": "扉頁",
+		"copyright_page": "版權頁",
+		"wrote": "[著]",
+		"copyright": "本書由作者用 Zine 制作發布, 版權歸作者所有。<br>未經書面同意,不得以任何形式複制轉載。",
+		"more_detail": "了解更多請訪問"
+	},
+	"en": {
+		"head_page": "Head Page",
+		"copyright_page": "Copyright Page",
+		"wrote": "",
+		"copyright": "This book is published by Zine, copyright is owned by the author.<br>No reprint can be made in any form without written consent.",
+		"more_detail": "More details on "
+	}
+};
+
+const tempFilePath = path.join(__dirname, '../temp/' + UUID({ noDash: true }) + '/');
+fs.mkdirSync(tempFilePath);
+
+const TOCTemplatePath = path.join(__dirname, '../lib/pages/TOC/toc.xhtml.ejs');
+const headPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/head-page/head-page.tpl'));
+const headPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/head-page/head-page.css'));
+const copyrightPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/copyright-page/copyright-page.tpl'));
+const copyrightPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/copyright-page/copyright-page.css'));
+
+
+let stdinData = '';
+let inputData;
+process.stdin.setEncoding('utf-8');
+process.stdin.on('readable', function () {
+	let chunk;
+	while (chunk = this.read()) {
+		stdinData += chunk.toString();
+	}
+});
+process.stdin.on('end', function () {
+	try {
+		inputData = JSON.parse(stdinData);
+	} catch (e) {
+		console.log(e.stack)
+	}
+	if (!inputData) {
+		console.log('Error: invalid input data!');
+		process.exit(1);
+		return;
+	}
+	co(function* () {
+		const { slug, owner, name, heading, description, cover, fonts } = inputData;
+
+		const job = {
+			fonts: {
+				css: '',
+				src: [],
+				job: []
+			},
+			contentCSS: requestBody('https://zine.la/p/c/article/Content/Content_fb058ab.css'),
+			contentList: []
+		};
+
+		for (let i in fonts) {
+			const matches = fonts[i].src.match(/\.([^.]+?)$/);
+			const extName = matches && matches[1];
+			if (extName) {
+				job.fonts.css += '@font-face{font-family:' + fonts[i].font_family +';src:url(./fonts/font_' + i + '.' + extName + ')}';
+				job.fonts.job[i] = requestPipeToFile(fonts[i].src, tempFilePath + 'font_' + i + '.' + extName);
+				job.fonts.src[i] = tempFilePath + 'font_' + i + '.' + extName;
+			}
+		}
+
+		function loopList (list, depth, target) {
+			let indentSpaceStr = '';
+			for (let i = 0; i < depth; i ++) {
+				indentSpaceStr += '——';
+			}
+			list.forEach((item, index) => {
+				const identity = depth + '-' + index;
+				const title = item.detail.name || item.detail.title;
+				item.detail = item.detail || {};
+				const background = item.detail.background || {};
+				target.push({
+					title: indentSpaceStr + '  ' + title,
+					backgroundCSS: requestBackgroundCSS(background, identity),
+					contentAndTheme: requestThemeCSS(title, item.detail.content, item.detail.theme && item.detail.theme.css, identity)
+				});
+
+				if (item.children) {
+					loopList(item.children, depth + 1, target);
+				}
+			});
+		}
+
+		loopList(inputData.children, 0, job.contentList);
+
+		const result = yield job;
+
+		const headPageContent = headPageTPL.toString()
+			.replace(/\{\{\stitle\s\}\}/g, name)
+			.replace(/\{\{\sheading\s\}\}/g, heading || '')
+			.replace(/\{\{\sauthor\s\}\}/g, owner.username)
+			.replace(/\{\{\swrote\s\}\}/g, i18n[lang].wrote)
+			.replace(/\{\{\sdescription\s\}\}/g, description);
+		const copyrightPageContent = copyrightPageTPL.toString()
+			.replace(/\{\{\stitle\s\}\}/g, name)
+			.replace(/\{\{\scopyright\s\}\}/g, i18n[lang].copyright)
+			.replace(/\{\{\smore_detail\s\}\}/g, i18n[lang].more_detail);
+
+
+		const option = {
+		  title: name,
+		  author: owner.username,
+		  cover: cover,
+		  tocTitle: name,
+		  lang,
+		  appendChapterTitles: false,
+		  customHtmlTocTemplatePath: TOCTemplatePath,
+		  content: [
+		  	{ title: i18n[lang].head_page, data: headPageContent, beforeToc: true },
+		  	{ title: i18n[lang].copyright_page, data: copyrightPageContent, beforeToc: true }
+		  ],
+		  fonts: result.fonts.src,
+		  css: headPageCSS + copyrightPageCSS + result.fonts.css + result.contentCSS
+		};
+
+		result.contentList.forEach((item) => {
+			option.content.push({
+				title: item.title,
+				data: item.contentAndTheme.content
+			});
+
+			option.css += item.contentAndTheme.css + item.backgroundCSS
+		});
+
+
+		// console.log(JSON.stringify(option));
+		new Epub(option, outputPath).promise.then(function () {
+			deleteFolderRecursive(tempFilePath);
+		}, function () {
+			deleteFolderRecursive(tempFilePath);
+		});
+	});
+});
+
+function * requestBody(url) {
+	const response = yield request(url);
+	return response.body;
+}
+function * requestThemeCSS(title, content, cssURL, identity) {
+	let response;
+	if (cssURL) {
+		response = yield request(cssURL);
+	}
+	if (content) {
+	    const $ = cheerio.load(content, { decodeEntities: false });
+	    $('font').each((i, item) => {
+	    	$(item).css('color', $(item).attr('color'));
+	    	$(item).removeAttr('color');
+	    });
+	    content = $.html()
+	}
+	return {
+		content: '<div class="content content-' + identity + '">' + (content || title) + '</div>',
+		css: cssURL && response.body.replace(/\.content\b/g, '.content-' + identity)
+	}
+}
+function * requestBackgroundCSS(backgroundData, identity) {
+	const { type, value } = backgroundData;
+	const matches = value && value.match(/\.([^.]+?)$/);
+	const extName = matches && matches[1];
+	let filePath = tempFilePath + 'img_temp_' + (new Date().getTime()) + '.' + extName;
+
+	if (type === 'texture') {
+		yield requestPipeToFile(value, filePath);
+		const dimens = imgSize(filePath);
+		return '.content-' + identity + '{background-image:url(' + value + ');background-size:' + (dimens.width / 2) + 'px ' + (dimens.height / 2) + 'px}';
+	}
+	else if (type === 'color') {
+		return '.content-' + identity + '{background-color:' + value + '}';
+	}
+}
+function requestPipeToFile(url, filepath) {
+    return new Promise(function(resolve, reject) {
+        try {
+            const stream = fs.createWriteStream(filepath);
+            stream.on('finish', function() {
+                // console.log("pipe finish:", url);
+                return resolve(true);
+            });
+            return _request(url).pipe(stream);
+        } catch (e) {
+            return reject(e);
+        }
+    });
+};
+function deleteFolderRecursive(path) {
+    if (fs.existsSync(path)) {
+        fs.readdirSync(path).forEach(function(file) {
+            var curPath = path + '/' + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};
+function UUID(options) {
+  const { noDash } = options || {};
+  const dashStr = noDash ? '' : '-';
+  function S4() {
+    return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+  }
+  return (S4() + S4() + dashStr + S4() + dashStr + S4() + dashStr + S4() + dashStr + S4() + S4() + S4());
+}

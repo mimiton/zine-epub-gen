@@ -1,0 +1,70 @@
+{
+  "_args": [
+    [
+      {
+        "raw": ".",
+        "scope": null,
+        "escapedName": null,
+        "name": null,
+        "rawSpec": ".",
+        "spec": "/Users/xze/Documents/node-v6.10.2-darwin-x64/lib/node_modules/zine-epub-gen",
+        "type": "directory"
+      },
+      "/Users/xze/Documents/node-v6.10.2-darwin-x64/lib/node_modules/zine-epub-gen"
+    ],
+    [
+      {
+        "raw": ".",
+        "scope": null,
+        "escapedName": null,
+        "name": null,
+        "rawSpec": ".",
+        "spec": "/Users/xze/Documents/node-v6.10.2-darwin-x64/lib/node_modules/zine-epub-gen",
+        "type": "directory"
+      },
+      "/Users/xze/Documents/node-v6.10.2-darwin-x64/lib/node_modules/zine-epub-gen"
+    ]
+  ],
+  "_from": "lib/node_modules/zine-epub-gen",
+  "_id": "zine-epub-gen@0.0.1",
+  "_inCache": true,
+  "_location": "/zine-epub-gen",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": ".",
+    "scope": null,
+    "escapedName": null,
+    "name": null,
+    "rawSpec": ".",
+    "spec": "/Users/xze/Documents/node-v6.10.2-darwin-x64/lib/node_modules/zine-epub-gen",
+    "type": "directory"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "file:lib/node_modules/zine-epub-gen",
+  "_shasum": "6bb2bfecfbbe0c5229ff5981898ee311e2ece505",
+  "_shrinkwrap": null,
+  "_spec": ".",
+  "_where": "/Users/xze/Documents/node-v6.10.2-darwin-x64/lib/node_modules/zine-epub-gen",
+  "bin": {
+    "zine-epub-gen": "./bin/zine-epub-gen"
+  },
+  "dependencies": {
+    "co": "^4.6.0",
+    "co-request": "^1.0.0",
+    "epub-gen": "0.0.20",
+    "image-size": "^0.6.3",
+    "optimist": "0.6.x",
+    "path": "^0.12.7",
+    "request": "^2.88.0",
+    "cheerio": "^0.22.0"
+  },
+  "devDependencies": {},
+  "main": "",
+  "name": "zine-epub-gen",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "scripts": {},
+  "version": "0.0.1"
+}
