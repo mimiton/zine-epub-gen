@@ -1,22 +1,44 @@
-.copyright-page .top-title {
-	font-family: SourceHanSansCN-Regular;
-	font-size: 14px;
-	color: #7f7f7f;
-	text-align: center;
+.copyright-page {
+	font-family: SourceHanSerifSC-Regular;
+}
+.copyright-page .copyright-info {
+	margin: 55px auto 0;
+	font-weight: bold;
+	font-size: 13px;
+	color: black;
+}
+.copyright-page .book-info {
+	margin: 18px auto 0;
+	font-size: 12px;
+	color: black;
+	line-height: 20px;
+}
+.copyright-page .book-info > p {
+	margin: 0;
 }
 .copyright-page .copyright {
-	margin: 64px auto 0;
-	font-family: SourceHanSerifSC-Regular;
-	font-size: 13px;
+	margin: 20px auto 0;
+	font-size: 12px;
 	line-height: 20px;
 	color: black;
 }
-.copyright-page .more-detail {
-	margin: 8px auto 0;
-	font-family: PingFangSC-Regular;
+.copyright-page .title {
+	font-family: SourceHanSansCN-Regular;
+	margin: 36px auto 0;
 	font-size: 12px;
 	color: black;
-	text-decoration: underline;
+}
+.copyright-page .author {
+	margin: 20px auto 0!important;
+}
+.copyright-page .author,
+.copyright-page .word-count,
+.copyright-page .publisher {
+	margin: 0;
+	font-family: SourceHanSansCN-Regular;
+	font-size: 12px;
+	line-height: 20px;
+	color: black;
 }
 .copyright-page .logo {
 	position: absolute;

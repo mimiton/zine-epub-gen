@@ -16,25 +16,61 @@ const lang = argv['l'] || 'zh-cn';
 
 const i18n = {
 	"zh-cn": {
+		"cover": "封面",
 		"head_page": "扉页",
+		"copyright_info": "版权信息",
 		"copyright_page": "版权页",
+		"author_page": "作者页",
 		"wrote": "[著]",
-		"copyright": "本书由作者用 Zine 制作发布, 版权归作者所有。<br>未经书面同意,不得以任何形式复制转载。",
-		"more_detail": "了解更多请访问"
+		"wrote_1": " 著",
+		"publish_by_zine": "通过自出版平台 Zine 发布",
+		"author_column": "作者专栏地址：",
+		"copyright": "该作品由作者通过 Zine 制作发布, 版权归作者所有。<br>未经书面同意,不得以任何形式复制转载。",
+		"colon": "：",
+		"comma": "，",
+		"text_author": "作  者",
+		"text_word_count": "字  数",
+		"text_publisher": "出版方",
+		"wechat_scan": "微信扫码在小程序上查看本书",
+		"unknown": "未知"
 	},
 	"zh-tw": {
+		"cover": "封面",
 		"head_page": "扉頁",
+		"copyright_info": "版權信息",
 		"copyright_page": "版權頁",
+		"author_page": "作者页",
 		"wrote": "[著]",
-		"copyright": "本書由作者用 Zine 制作發布, 版權歸作者所有。<br>未經書面同意,不得以任何形式複制轉載。",
-		"more_detail": "了解更多請訪問"
+		"wrote_1": " 著",
+		"publish_by_zine": "通過自出版平台 Zine 發布",
+		"author_column": "作者專欄地址：",
+		"copyright": "該作品由作者通過 Zine 制作發布, 版權歸作者所有。<br>未經書面同意,不得以任何形式複制轉載。",
+		"colon": "：",
+		"comma": "，",
+		"text_author": "作  者",
+		"text_word_count": "字  數",
+		"text_publisher": "出版方",
+		"wechat_scan": "微信掃碼在小程序上查看本書",
+		"unknown": "未知"
 	},
 	"en": {
+		"cover": "Cover",
 		"head_page": "Head Page",
+		"copyright_info": "Copyright Information",
 		"copyright_page": "Copyright Page",
+		"author_page": "Author Page",
 		"wrote": "",
-		"copyright": "This book is published by Zine, copyright is owned by the author.<br>No reprint can be made in any form without written consent.",
-		"more_detail": "More details on "
+		"wrote_1": "",
+		"publish_by_zine": "Released by publishing platform Zine",
+		"author_column": "Author's column link:",
+		"copyright": "The work is published by the author through Zine, and the copyright belongs to the author. <br> no copy can be copied in any form without written consent.",
+		"colon": ":",
+		"comma": ",",
+		"text_author": "Author    ",
+		"text_word_count": "Word count",
+		"text_publisher": "Publisher ",
+		"wechat_scan": "Scan in Wechat to see this book in mini-program",
+		"unknown": "Unknown"
 	}
 };
 
@@ -42,10 +78,14 @@ const tempFilePath = path.join(__dirname, '../temp/' + UUID({ noDash: true }) + 
 fs.mkdirSync(tempFilePath);
 
 const TOCTemplatePath = path.join(__dirname, '../lib/pages/TOC/toc.xhtml.ejs');
+const coverPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/cover-page/cover-page.tpl'));
+const coverPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/cover-page/cover-page.css'));
 const headPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/head-page/head-page.tpl'));
 const headPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/head-page/head-page.css'));
 const copyrightPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/copyright-page/copyright-page.tpl'));
 const copyrightPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/copyright-page/copyright-page.css'));
+const authorPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/author-page/author-page.tpl'));
+const authorPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/author-page/author-page.css'));
 
 
 let stdinData = '';
@@ -69,7 +109,7 @@ process.stdin.on('end', function () {
 		return;
 	}
 	co(function* () {
-		const { slug, owner, name, heading, description, cover, fonts } = inputData;
+		const { slug, owner, name, heading, description, cover, fonts, word_count, wx_mini_program_qr_code } = inputData;
 
 		const job = {
 			fonts: {
@@ -98,8 +138,8 @@ process.stdin.on('end', function () {
 			}
 			list.forEach((item, index) => {
 				const identity = depth + '-' + index;
-				const title = item.detail.name || item.detail.title;
 				item.detail = item.detail || {};
+				const title = item.detail.name || item.detail.title;
 				const background = item.detail.background || {};
 				target.push({
 					title: indentSpaceStr + '  ' + title,
@@ -117,6 +157,9 @@ process.stdin.on('end', function () {
 
 		const result = yield job;
 
+		const date = new Date();
+		const coverPageContent = coverPageTPL.toString()
+			.replace(/\{\{\scover\s\}\}/g, cover);
 		const headPageContent = headPageTPL.toString()
 			.replace(/\{\{\stitle\s\}\}/g, name)
 			.replace(/\{\{\sheading\s\}\}/g, heading || '')
@@ -124,10 +167,26 @@ process.stdin.on('end', function () {
 			.replace(/\{\{\swrote\s\}\}/g, i18n[lang].wrote)
 			.replace(/\{\{\sdescription\s\}\}/g, description);
 		const copyrightPageContent = copyrightPageTPL.toString()
+			.replace(/\{\{\swrote\s\}\}/g, i18n[lang].wrote_1)
+			.replace(/\{\{\scopyright_info\s\}\}/g, i18n[lang].copyright_info)
+			.replace(/\{\{\spublish_by_zine\s\}\}/g, i18n[lang].publish_by_zine)
+			.replace(/\{\{\syear_date\s\}\}/g, date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate())
+			.replace(/\{\{\sauthor_column\s\}\}/g, i18n[lang].author_column)
+			.replace(/\{\{\scolumn_link\s\}\}/g, owner.column_url)
 			.replace(/\{\{\stitle\s\}\}/g, name)
+			.replace(/\{\{\sauthor\s\}\}/g, owner.username)
+			.replace(/\{\{\sword_count\s\}\}/g, word_count || i18n[lang].unknown)
 			.replace(/\{\{\scopyright\s\}\}/g, i18n[lang].copyright)
-			.replace(/\{\{\smore_detail\s\}\}/g, i18n[lang].more_detail);
-
+			.replace(/\{\{\scolon\s\}\}/g, i18n[lang].colon)
+			.replace(/\{\{\scomma\s\}\}/g, i18n[lang].comma)
+			.replace(/\{\{\stext_author\s\}\}/g, i18n[lang].text_author)
+			.replace(/\{\{\stext_word_count\s\}\}/g, i18n[lang].text_word_count)
+			.replace(/\{\{\stext_publisher\s\}\}/g, i18n[lang].text_publisher);
+		const authorPageContent = authorPageTPL.toString()
+			.replace(/\{\{\sauthor\s\}\}/g, owner.username)
+			.replace(/\{\{\sdescription\s\}\}/g, owner.description || '')
+			.replace(/\{\{\sqr_code_url\s\}\}/g, wx_mini_program_qr_code)
+			.replace(/\{\{\swechat_scan\s\}\}/g, i18n[lang].wechat_scan);
 
 		const option = {
 		  title: name,
@@ -138,11 +197,13 @@ process.stdin.on('end', function () {
 		  appendChapterTitles: false,
 		  customHtmlTocTemplatePath: TOCTemplatePath,
 		  content: [
+		  	{ title: i18n[lang].cover, data: coverPageContent, beforeToc: true },
 		  	{ title: i18n[lang].head_page, data: headPageContent, beforeToc: true },
-		  	{ title: i18n[lang].copyright_page, data: copyrightPageContent, beforeToc: true }
+		  	{ title: i18n[lang].copyright_page, data: copyrightPageContent, beforeToc: true },
+		  	{ title: i18n[lang].author_page, data: authorPageContent, beforeToc: true }
 		  ],
 		  fonts: result.fonts.src,
-		  css: headPageCSS + copyrightPageCSS + result.fonts.css + result.contentCSS
+		  css: coverPageCSS + headPageCSS + copyrightPageCSS + authorPageCSS + result.fonts.css + result.contentCSS
 		};
 
 		result.contentList.forEach((item) => {

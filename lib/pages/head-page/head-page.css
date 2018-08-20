@@ -1,33 +1,22 @@
 .head-page {
-	font-family: SourceHanSansCN-Regular;
-}
-.head-page .top-title {
-	font-size: 14px;
-	color: #7f7f7f;
-	text-align: center;
+	font-family: PingFangSC-Regular;
 }
 .head-page .title {
-	margin: 65px auto 0;
+	margin: 60px auto 0;
 	font-size: 26px;
 	color: black;
+	text-align: center;
 }
 .head-page .sub-title {
-	margin: 20px auto;
-	font-size: 16px;
+	margin: 16px auto;
+	font-size: 14px;
 	color: black;
+	text-align: center;
 }
 
 .head-page .author {
-	position: absolute;
-	bottom: 26px;
-	width:  100%;
-	font-size: 16px;
+	margin: 20px auto 0;
+	font-size: 14px;
 	color: black;
-}
-.head-page .description {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	font-size: 13px;
-	color: rgba(0, 0, 0, 0.5);
+	text-align: center;
 }
