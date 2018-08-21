@@ -208,7 +208,7 @@ process.stdin.on('end', function () {
 
 		result.contentList.forEach((item) => {
 			option.content.push({
-				title: item.title,
+				title: (item.title || '').substr(0, 50),
 				data: item.contentAndTheme.content
 			});
 
