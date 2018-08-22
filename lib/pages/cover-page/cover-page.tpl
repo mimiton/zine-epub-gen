@@ -1,3 +1,3 @@
 <div class="cover-page">
-	<img class="cover" src="{{ cover }}"/>
+	<div class="cover" style="background-image:url({{ cover }})"/>
 </div>

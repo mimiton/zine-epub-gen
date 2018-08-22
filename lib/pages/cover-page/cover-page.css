@@ -1,3 +1,8 @@
 .cover-page .cover {
+	position: absolute;
+	top: 50%;
+	margin-top: -65%;
 	width: 100%;
+	padding-top: 130%;
+	background-size: 100% 100%;
 }

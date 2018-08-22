@@ -15,8 +15,16 @@
 }
 
 .head-page .author {
-	margin: 20px auto 0;
+	margin: 60px auto 0;
 	font-size: 14px;
 	color: black;
 	text-align: center;
+}
+.head-page .logo {
+	position: absolute;
+	bottom: 50px;
+	left: 50%;
+	width: 10%;
+	margin-left: -5%;
+	padding-top: 73.33333333%;
 }

@@ -23,9 +23,9 @@
 	color: black;
 }
 .copyright-page .title {
-	font-family: SourceHanSansCN-Regular;
+	font-family: PingFangSC-Regular;
 	margin: 36px auto 0;
-	font-size: 12px;
+	font-size: 13px;
 	color: black;
 }
 .copyright-page .author {
@@ -35,15 +35,18 @@
 .copyright-page .word-count,
 .copyright-page .publisher {
 	margin: 0;
-	font-family: SourceHanSansCN-Regular;
-	font-size: 12px;
+	font-family: PingFangSC-Regular;
+	font-size: 13px;
 	line-height: 20px;
 	color: black;
 }
-.copyright-page .logo {
+
+.copyright-page .zine-desc {
 	position: absolute;
-	bottom: 50px;
-	left: 0;
-	width: 40%;
-	height: auto;
+	bottom: 40px;
+	width: 100%;
+	font-family: PingFangSC-Regular;
+	font-size: 10px;
+	color: black;
+	line-height: 20px;
 }
