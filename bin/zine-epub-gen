@@ -11,6 +11,7 @@ const co = require("co");
 const _request = require('request');
 const request = require("co-request");
 const argv = require('optimist').argv;
+const setTempFilePath = argv['t'];
 const outputPath = argv['o'];
 const lang = argv['l'] || 'zh-cn';
 
@@ -77,7 +78,9 @@ const i18n = {
 	}
 };
 
-const tempFilePath = path.join(__dirname, '../temp/' + UUID({ noDash: true }) + '/');
+const tempFilePathRoot = setTempFilePath || path.join(__dirname, '../temp/');
+
+const tempFilePath = path.join(tempFilePathRoot, UUID({ noDash: true }) + '/');
 fs.mkdirSync(tempFilePath);
 
 const TOCTemplatePath = path.join(__dirname, '../lib/pages/TOC/toc.xhtml.ejs');
