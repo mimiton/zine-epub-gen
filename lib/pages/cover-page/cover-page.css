@@ -1,16 +1,3 @@
-.cover-page {
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-}
 .cover-page .cover {
-	position: absolute;
-	top: 50%;
-	margin-top: -65%;
 	width: 100%;
-	padding-top: 130%;
-	background-size: cover;
-	background-position: center;
 }

@@ -1,5 +1,6 @@
 .copyright-page {
 	font-family: SourceHanSerifSC-Regular;
+	font-size: 12px;
 }
 .copyright-page a {
 	color: black;
@@ -13,7 +14,6 @@
 }
 .copyright-page .book-info {
 	margin: 18px auto 0;
-	font-size: 12px;
 	color: black;
 	line-height: 20px;
 }
@@ -22,7 +22,6 @@
 }
 .copyright-page .copyright {
 	margin: 20px auto 0;
-	font-size: 12px;
 	line-height: 20px;
 	color: black;
 }
@@ -30,6 +29,7 @@
 	font-family: PingFangSC-Regular;
 	margin: 36px auto 0;
 	font-size: 13px;
+	font-weight: bold;
 	color: black;
 }
 .copyright-page .author {
@@ -40,13 +40,12 @@
 .copyright-page .publisher {
 	margin: 0;
 	font-family: PingFangSC-Regular;
-	font-size: 13px;
 	line-height: 20px;
 	color: black;
 }
 
 .copyright-page .zine-desc {
-	margin: 200px auto 0;
+	margin: 38px auto 0;
 	width: 100%;
 	font-family: PingFangSC-Regular;
 	font-size: 10px;

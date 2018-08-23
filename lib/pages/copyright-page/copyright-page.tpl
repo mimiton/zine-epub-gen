@@ -9,7 +9,7 @@
 	<p class="title">{{ title }}</p>
 	<p class="author">{{ text_author }}{{ colon }}{{ author }}</p>
 	<p class="word-count">{{ text_word_count }}{{ colon }}{{ word_count }}</p>
-	<p class="publisher">{{ text_publisher }}{{ colon }}Zine(<a href="https://zine.la">https://zine.la</a>)</p>
+	<p class="publisher">{{ text_publisher }}{{ colon }}Zine (<a href="https://zine.la">https://zine.la</a>)</p>
 
 	<p class="zine-desc">{{ zine_desc }}</p>
 </div>

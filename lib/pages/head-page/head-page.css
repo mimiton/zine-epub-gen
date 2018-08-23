@@ -2,20 +2,23 @@
 	font-family: PingFangSC-Regular;
 }
 .head-page .title {
-	margin: 0 auto;
+	margin: 10% auto 0;
 	font-size: 26px;
 	color: black;
 	text-align: center;
 }
+.head-page .sub-title.no-heading {
+	display: none;
+}
 .head-page .sub-title {
-	margin: 16px auto;
+	margin: 16px auto 60px;
 	font-size: 14px;
 	color: black;
 	text-align: center;
 }
 
 .head-page .author {
-	margin: 60px auto 0;
+	margin: 20px auto 0;
 	font-size: 14px;
 	color: black;
 	text-align: center;
@@ -23,7 +26,7 @@
 .head-page .logo {
 	display: block;
 	position: absolute;
-	bottom: 0;
+	bottom: 5%;
 	left: 50%;
 	width: 10%;
 	height: auto;

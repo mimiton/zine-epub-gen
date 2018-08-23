@@ -20,8 +20,8 @@ const i18n = {
 		"cover": "封面",
 		"head_page": "扉页",
 		"copyright_info": "版权信息",
-		"copyright_page": "版权页",
-		"author_page": "作者页",
+		"copyright_page": "版权信息",
+		"author_page": "作者信息",
 		"wrote": "[著]",
 		"wrote_1": " 著",
 		"publish_by_zine": "通过自出版平台 Zine 发布",
@@ -30,8 +30,8 @@ const i18n = {
 		"zine_desc": "Zine，源自Magazine。它代表了自我表达、独立创作的精神和文化。我们致力于提供高品质的创作、分享、在线出版服务。",
 		"colon": "：",
 		"comma": "，",
-		"text_author": "作&nbsp;&nbsp;者",
-		"text_word_count": "字&nbsp;&nbsp;数",
+		"text_author": "作&nbsp;&nbsp;&nbsp;者",
+		"text_word_count": "字&nbsp;&nbsp;&nbsp;数",
 		"text_publisher": "出版方",
 		"scan_code_read_book": "扫码阅读本书更新",
 		"unknown": "未知"
@@ -40,8 +40,8 @@ const i18n = {
 		"cover": "封面",
 		"head_page": "扉頁",
 		"copyright_info": "版權信息",
-		"copyright_page": "版權頁",
-		"author_page": "作者页",
+		"copyright_page": "版權信息",
+		"author_page": "作者信息",
 		"wrote": "[著]",
 		"wrote_1": " 著",
 		"publish_by_zine": "通過自出版平台 Zine 發布",
@@ -50,8 +50,8 @@ const i18n = {
 		"zine_desc": "Zine，源自Magazine。它代表了自我表達、獨立創作的精神和文化。我們致力于提供高品質的創作、分享、在線出版服務。",
 		"colon": "：",
 		"comma": "，",
-		"text_author": "作&nbsp;&nbsp;者",
-		"text_word_count": "字&nbsp;&nbsp;數",
+		"text_author": "作&nbsp;&nbsp;&nbsp;者",
+		"text_word_count": "字&nbsp;&nbsp;&nbsp;數",
 		"text_publisher": "出版方",
 		"scan_code_read_book": "掃碼閱讀本書更新",
 		"unknown": "未知"
@@ -60,8 +60,8 @@ const i18n = {
 		"cover": "Cover",
 		"head_page": "Head Page",
 		"copyright_info": "Copyright Information",
-		"copyright_page": "Copyright Page",
-		"author_page": "Author Page",
+		"copyright_page": "Copyright Information",
+		"author_page": "Author Introduction",
 		"wrote": "",
 		"wrote_1": "",
 		"publish_by_zine": "Released by publishing platform Zine",
@@ -165,6 +165,7 @@ process.stdin.on('end', function () {
 			.replace(/\{\{\scover\s\}\}/g, cover);
 		const headPageContent = headPageTPL.toString()
 			.replace(/\{\{\stitle\s\}\}/g, name)
+			.replace(/\{\{\sno_heading\s\}\}/g, heading ? '' : 'no-heading')
 			.replace(/\{\{\sheading\s\}\}/g, heading || '')
 			.replace(/\{\{\sauthor\s\}\}/g, owner.username)
 			.replace(/\{\{\swrote\s\}\}/g, i18n[lang].wrote)
@@ -279,12 +280,14 @@ function * requestBackgroundCSS(backgroundData, identity) {
 		returnStr = '';
 	}
 
-	const forceOverridePaddingCSSStr = '.content-' + identity + '{padding-left:' + forceOverridePadding + '!important;padding-right:' + forceOverridePadding + '!important}';
+	const forceOverridePaddingCSSStr = '.title{left:0!important;width:100%!important}' + 
+	'.content-' + identity + ' img{left:0!important;width:100%!important}' + 
+	'.content-' + identity + '{padding-left:' + forceOverridePadding + '!important;padding-right:' + forceOverridePadding + '!important}';
 	return returnStr + forceOverridePaddingCSSStr;
 
 	function isWhiteColor (str) {
 		let strLower = str.toLowerCase();
-		return str === '#fff' || str === '#fff' || str.match(/rgba\s*\(\s*255\s*,\s*255\s*,\s*255\s*,\s*1(\.\s*0?)?\s*\)/);
+		return str === '#fff' || str === '#fff' || str.match(/rgba?\s*\(\s*255\s*,\s*255\s*,\s*255\s*(,\s*1(\.\s*0?)?)?\s*\)/);
 	}
 }
 function requestPipeToFile(url, filepath) {
