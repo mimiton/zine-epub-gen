@@ -30,8 +30,8 @@ const i18n = {
 		"zine_desc": "Zine，源自Magazine。它代表了自我表达、独立创作的精神和文化。我们致力于提供高品质的创作、分享、在线出版服务。",
 		"colon": "：",
 		"comma": "，",
-		"text_author": "作  者",
-		"text_word_count": "字  数",
+		"text_author": "作&nbsp;&nbsp;者",
+		"text_word_count": "字&nbsp;&nbsp;数",
 		"text_publisher": "出版方",
 		"scan_code_read_book": "扫码阅读本书更新",
 		"unknown": "未知"
@@ -50,8 +50,8 @@ const i18n = {
 		"zine_desc": "Zine，源自Magazine。它代表了自我表達、獨立創作的精神和文化。我們致力于提供高品質的創作、分享、在線出版服務。",
 		"colon": "：",
 		"comma": "，",
-		"text_author": "作  者",
-		"text_word_count": "字  數",
+		"text_author": "作&nbsp;&nbsp;者",
+		"text_word_count": "字&nbsp;&nbsp;數",
 		"text_publisher": "出版方",
 		"scan_code_read_book": "掃碼閱讀本書更新",
 		"unknown": "未知"
@@ -70,7 +70,7 @@ const i18n = {
 		"zine_desc": "Zine originates from Magazine, which represents the spirit and culture of self expression and independent creation.",
 		"colon": ":",
 		"comma": ",",
-		"text_author": "Author    ",
+		"text_author": "Author&nbsp;&nbsp;&nbsp;&nbsp;",
 		"text_word_count": "Word count",
 		"text_publisher": "Publisher ",
 		"scan_code_read_book": "Scan QR-Code to read latest version of this book",
@@ -138,17 +138,14 @@ process.stdin.on('end', function () {
 		}
 
 		function loopList (list, depth, target) {
-			let indentSpaceStr = '';
-			for (let i = 0; i < depth; i ++) {
-				indentSpaceStr += '　　';
-			}
 			list.forEach((item, index) => {
 				const identity = depth + '-' + index;
 				item.detail = item.detail || {};
 				const title = item.detail.name || item.detail.title;
 				const background = item.detail.background || {};
 				target.push({
-					title: indentSpaceStr + '  ' + title,
+					depth,
+					title: title,
 					backgroundCSS: requestBackgroundCSS(background, identity),
 					contentAndTheme: requestThemeCSS(title, item.detail.content, item.detail.theme && item.detail.theme.css, identity)
 				});
@@ -219,7 +216,8 @@ process.stdin.on('end', function () {
 		result.contentList.forEach((item) => {
 			option.content.push({
 				title: (item.title || '').substr(0, 50),
-				data: item.contentAndTheme.content
+				data: item.contentAndTheme.content,
+				depth: item.depth
 			});
 
 			option.css += item.contentAndTheme.css + item.backgroundCSS
