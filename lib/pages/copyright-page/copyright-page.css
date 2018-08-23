@@ -1,8 +1,12 @@
 .copyright-page {
 	font-family: SourceHanSerifSC-Regular;
 }
+.copyright-page a {
+	color: black;
+	text-decoration: underline;
+}
 .copyright-page .copyright-info {
-	margin: 55px auto 0;
+	margin: 0 auto;
 	font-weight: bold;
 	font-size: 13px;
 	color: black;
@@ -42,8 +46,7 @@
 }
 
 .copyright-page .zine-desc {
-	position: absolute;
-	bottom: 40px;
+	margin: 200px auto 0;
 	width: 100%;
 	font-family: PingFangSC-Regular;
 	font-size: 10px;

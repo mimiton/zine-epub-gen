@@ -2,5 +2,5 @@
 	<p class="title">{{ title }}</p>
 	<p class="sub-title">{{ heading }}</p>
 	<p class="author">{{ author }} {{ wrote }}</p>
-	<p class="logo" style="background-image:url(../../../../../logo-small.png)"></p>
+    <img class="logo" src="../../../../../logo-small.png"></img>
 </div>

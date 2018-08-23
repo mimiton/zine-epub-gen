@@ -26,7 +26,7 @@ const i18n = {
 		"wrote_1": " 著",
 		"publish_by_zine": "通过自出版平台 Zine 发布",
 		"author_column": "作者专栏地址：",
-		"copyright": "该作品由作者通过 Zine 制作发布, 版权归作者所有。<br>未经书面同意,不得以任何形式复制转载。",
+		"copyright": "该作品版权归作者所有。未经书面同意,不得以任何形式复制转载。",
 		"zine_desc": "Zine，源自Magazine。它代表了自我表达、独立创作的精神和文化。我们致力于提供高品质的创作、分享、在线出版服务。",
 		"colon": "：",
 		"comma": "，",
@@ -46,7 +46,7 @@ const i18n = {
 		"wrote_1": " 著",
 		"publish_by_zine": "通過自出版平台 Zine 發布",
 		"author_column": "作者專欄地址：",
-		"copyright": "該作品由作者通過 Zine 制作發布, 版權歸作者所有。<br>未經書面同意,不得以任何形式複制轉載。",
+		"copyright": "該作品版權歸作者所有。未經書面同意,不得以任何形式複制轉載。",
 		"zine_desc": "Zine，源自Magazine。它代表了自我表達、獨立創作的精神和文化。我們致力于提供高品質的創作、分享、在線出版服務。",
 		"colon": "：",
 		"comma": "，",
@@ -66,7 +66,7 @@ const i18n = {
 		"wrote_1": "",
 		"publish_by_zine": "Released by publishing platform Zine",
 		"author_column": "Author's column link:",
-		"copyright": "The work is published by the author through Zine, and the copyright belongs to the author. <br> no copy can be copied in any form without written consent.",
+		"copyright": "The copyright of the work belongs to the author. No reprint can be made in any form without written consent.",
 		"zine_desc": "Zine originates from Magazine, which represents the spirit and culture of self expression and independent creation.",
 		"colon": ":",
 		"comma": ",",
@@ -140,7 +140,7 @@ process.stdin.on('end', function () {
 		function loopList (list, depth, target) {
 			let indentSpaceStr = '';
 			for (let i = 0; i < depth; i ++) {
-				indentSpaceStr += '——';
+				indentSpaceStr += '　　';
 			}
 			list.forEach((item, index) => {
 				const identity = depth + '-' + index;
@@ -177,7 +177,7 @@ process.stdin.on('end', function () {
 			.replace(/\{\{\scopyright_info\s\}\}/g, i18n[lang].copyright_info)
 			.replace(/\{\{\spublish_by_zine\s\}\}/g, i18n[lang].publish_by_zine)
 			.replace(/\{\{\syear_date\s\}\}/g, date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate())
-			.replace(/\{\{\sauthor_column\s\}\}/g, i18n[lang].author_column)
+			.replace(/\{\{\sauthor_column\s\}\}/g, decodeURIComponent(i18n[lang].author_column))
 			.replace(/\{\{\scolumn_link\s\}\}/g, owner.column_url)
 			.replace(/\{\{\stitle\s\}\}/g, name)
 			.replace(/\{\{\sauthor\s\}\}/g, owner.username)
@@ -193,7 +193,7 @@ process.stdin.on('end', function () {
 			.replace(/\{\{\scover\s\}\}/g, cover)
 			.replace(/\{\{\sauthor\s\}\}/g, owner.username)
 			.replace(/\{\{\sdescription\s\}\}/g, owner.description || '')
-			.replace(/\{\{\sauthor_column\s\}\}/g, i18n[lang].author_column)
+			.replace(/\{\{\sauthor_column\s\}\}/g, decodeURIComponent(i18n[lang].author_column))
 			.replace(/\{\{\scolumn_link\s\}\}/g, owner.column_url)
 			.replace(/\{\{\sqr_code_url\s\}\}/g, wx_mini_program_qr_code)
 			.replace(/\{\{\sscan_code_read_book\s\}\}/g, i18n[lang].scan_code_read_book);
@@ -272,7 +272,7 @@ function * requestBackgroundCSS(backgroundData, identity) {
 		const dimens = imgSize(filePath);
 		returnStr = '.content-' + identity + '{background-image:url(' + value + ');background-size:' + (dimens.width / 2) + 'px ' + (dimens.height / 2) + 'px}';
 	}
-	else if (type === 'color') {
+	else if (type === 'color' && !isWhiteColor(value)) {
 		forceOverridePadding = '4%';
 		returnStr = '.content-' + identity + '{background-color:' + value + '}';
 	}
@@ -283,6 +283,11 @@ function * requestBackgroundCSS(backgroundData, identity) {
 
 	const forceOverridePaddingCSSStr = '.content-' + identity + '{padding-left:' + forceOverridePadding + '!important;padding-right:' + forceOverridePadding + '!important}';
 	return returnStr + forceOverridePaddingCSSStr;
+
+	function isWhiteColor (str) {
+		let strLower = str.toLowerCase();
+		return str === '#fff' || str === '#fff' || str.match(/rgba\s*\(\s*255\s*,\s*255\s*,\s*255\s*,\s*1(\.\s*0?)?\s*\)/);
+	}
 }
 function requestPipeToFile(url, filepath) {
     return new Promise(function(resolve, reject) {
