@@ -249,6 +249,13 @@ function * requestThemeCSS(title, content, cssURL, identity) {
 	    	$(item).css('color', $(item).attr('color'));
 	    	$(item).removeAttr('color');
 	    });
+	    const $titleImg = $('.title .title-img');
+	    if ($titleImg.length > 0) {
+		    const imgURLMatches = ($titleImg.css('background-image') || '').match(/url\s*\(\s*(\S+)\s*\)/);
+		    const imgURL = imgURLMatches && imgURLMatches[1];
+		    $titleImg.after($('<img class="title-img" src="' + imgURL + '"/>'));
+		    $titleImg.remove();
+		}
 	    content = $.html()
 	}
 	return {
