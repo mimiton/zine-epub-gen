@@ -179,7 +179,7 @@ process.stdin.on('end', function () {
 			.replace(/\{\{\scolumn_link\s\}\}/g, decodeURIComponent(owner.column_url))
 			.replace(/\{\{\stitle\s\}\}/g, name)
 			.replace(/\{\{\sauthor\s\}\}/g, owner.username)
-			.replace(/\{\{\sword_count\s\}\}/g, word_count || i18n[lang].unknown)
+			.replace(/\{\{\sword_count\s\}\}/g, word_count ? word_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : i18n[lang].unknown)
 			.replace(/\{\{\scopyright\s\}\}/g, i18n[lang].copyright)
 			.replace(/\{\{\scolon\s\}\}/g, i18n[lang].colon)
 			.replace(/\{\{\scomma\s\}\}/g, i18n[lang].comma)
@@ -215,8 +215,9 @@ process.stdin.on('end', function () {
 		};
 
 		result.contentList.forEach((item) => {
+			const tempTitle = (item.title || '');
 			option.content.push({
-				title: (item.title || '').substr(0, 50),
+				title: tempTitle.substr(0, 20) + (tempTitle.length > 20 ? '...' : ''),
 				data: item.contentAndTheme.content,
 				depth: item.depth
 			});

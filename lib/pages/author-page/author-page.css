@@ -2,6 +2,7 @@
 	font-family: SourceHanSerifSC-Regular;
 	font-size: 12px;
 	line-height: 20px;
+	min-height: 400px;
 }
 .author-page a {
 	color: black;
@@ -22,7 +23,7 @@
 	position: absolute;
 	bottom: 20px;
 	left: 20px;
-	width: 30%;
+	width: 100px;
 	box-shadow: 0 3px 18px 0 rgba(0, 0, 0, 0.18);
 }
 .author-page .scan-code-read-book {

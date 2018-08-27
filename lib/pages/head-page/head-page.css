@@ -1,5 +1,6 @@
 .head-page {
 	font-family: PingFangSC-Regular;
+	min-height: 400px;
 }
 .head-page .title {
 	margin: 10% auto 0;
