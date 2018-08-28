@@ -1,0 +1,12 @@
+.cover-page {
+	min-height: 400px;
+}
+.cover-page .logo {
+	display: block;
+	position: absolute;
+	bottom: 5%;
+	left: 50%;
+	width: 10%;
+	height: auto;
+	margin-left: -5%
+}

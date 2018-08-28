@@ -22,6 +22,7 @@ const i18n = {
 		"copyright_info": "版权信息",
 		"copyright_page": "版权信息",
 		"author_page": "作者信息",
+		"back_page": "封底",
 		"wrote": "[著]",
 		"wrote_1": " 著",
 		"publish_by_zine": "通过自出版平台 Zine 发布",
@@ -42,6 +43,7 @@ const i18n = {
 		"copyright_info": "版權信息",
 		"copyright_page": "版權信息",
 		"author_page": "作者信息",
+		"back_page": "封底",
 		"wrote": "[著]",
 		"wrote_1": " 著",
 		"publish_by_zine": "通過自出版平台 Zine 發布",
@@ -62,6 +64,7 @@ const i18n = {
 		"copyright_info": "Copyright Information",
 		"copyright_page": "Copyright Information",
 		"author_page": "Author Introduction",
+		"back_page": "Back Cover",
 		"wrote": "",
 		"wrote_1": "",
 		"publish_by_zine": "Released by publishing platform Zine",
@@ -92,6 +95,8 @@ const copyrightPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/copy
 const copyrightPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/copyright-page/copyright-page.css'));
 const authorPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/author-page/author-page.tpl'));
 const authorPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/author-page/author-page.css'));
+const backPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/back-page/back-page.tpl'));
+const backPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/back-page/back-page.css'));
 
 
 let stdinData = '';
@@ -115,6 +120,7 @@ process.stdin.on('end', function () {
 		return;
 	}
 	co(function* () {
+		let hasSecondLevelArticle;
 		const { slug, owner, name, heading, description, cover, fonts, word_count, wx_mini_program_qr_code } = inputData;
 
 		const job = {
@@ -138,6 +144,9 @@ process.stdin.on('end', function () {
 		}
 
 		function loopList (list, depth, target) {
+			if (depth > 0) {
+				hasSecondLevelArticle = true;
+			}
 			list.forEach((item, index) => {
 				const identity = depth + '-' + index;
 				item.detail = item.detail || {};
@@ -157,6 +166,17 @@ process.stdin.on('end', function () {
 		}
 
 		loopList(inputData.children, 0, job.contentList);
+
+		if (hasSecondLevelArticle) {
+			console.log('has')
+			for (let i in job.contentList) {
+				const item = job.contentList[i];
+				const nextItem = job.contentList[parseInt(i, 0) + 1];
+				if (item.depth === 0 && nextItem && nextItem.depth === 0) {
+					item.depth = 1;
+				}
+			}
+		}
 
 		const result = yield job;
 
@@ -211,7 +231,7 @@ process.stdin.on('end', function () {
 		  	{ title: i18n[lang].author_page, data: authorPageContent, beforeToc: true }
 		  ],
 		  fonts: result.fonts.src,
-		  css: coverPageCSS + headPageCSS + copyrightPageCSS + authorPageCSS + result.fonts.css + result.contentCSS
+		  css: coverPageCSS + headPageCSS + copyrightPageCSS + authorPageCSS + backPageCSS + result.fonts.css + result.contentCSS
 		};
 
 		result.contentList.forEach((item) => {
@@ -224,6 +244,12 @@ process.stdin.on('end', function () {
 
 			option.css += item.contentAndTheme.css + item.backgroundCSS
 		});
+
+		option.content.push({
+			title: i18n[lang].back_page,
+			data: backPageTPL,
+			excludeFromMenu: true
+	  	});
 
 
 		// console.log(JSON.stringify(option));
