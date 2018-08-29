@@ -101,6 +101,10 @@ const backPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/back-page
 
 let stdinData = '';
 let inputData;
+
+process.on('beforeExit', function () {
+	deleteFolderRecursive(tempFilePath);
+});
 process.stdin.setEncoding('utf-8');
 process.stdin.on('readable', function () {
 	let chunk;
@@ -123,7 +127,12 @@ process.stdin.on('end', function () {
 		let hasSecondLevelArticle;
 		const { slug, owner, name, heading, description, cover, fonts, word_count, wx_mini_program_qr_code } = inputData;
 
+		const extName = getExtName(cover);
+		const coverCutted = cover + '?imageMogr2/thumbnail/!400x520r/gravity/Center/crop/400x520';
+		const coverFileTempPath = extName && (tempFilePath + 'img_temp_' + new Date().getTime() + '.' + extName);
+
 		const job = {
+			coverFile: coverFileTempPath && requestPipeToFile(coverCutted, coverFileTempPath),
 			fonts: {
 				css: '',
 				src: [],
@@ -182,7 +191,7 @@ process.stdin.on('end', function () {
 
 		const date = new Date();
 		const coverPageContent = coverPageTPL.toString()
-			.replace(/\{\{\scover\s\}\}/g, cover);
+			.replace(/\{\{\scover\s\}\}/g, coverCutted);
 		const headPageContent = headPageTPL.toString()
 			.replace(/\{\{\stitle\s\}\}/g, name)
 			.replace(/\{\{\sno_heading\s\}\}/g, heading ? '' : 'no-heading')
@@ -208,7 +217,7 @@ process.stdin.on('end', function () {
 			.replace(/\{\{\stext_publisher\s\}\}/g, i18n[lang].text_publisher)
 			.replace(/\{\{\szine_desc\s\}\}/g, i18n[lang].zine_desc);
 		const authorPageContent = authorPageTPL.toString()
-			.replace(/\{\{\scover\s\}\}/g, cover)
+			.replace(/\{\{\scover\s\}\}/g, coverCutted)
 			.replace(/\{\{\sauthor\s\}\}/g, owner.username)
 			.replace(/\{\{\sdescription\s\}\}/g, owner.description || '')
 			.replace(/\{\{\sauthor_column\s\}\}/g, i18n[lang].author_column)
@@ -219,7 +228,7 @@ process.stdin.on('end', function () {
 		const option = {
 		  title: name,
 		  author: owner.username,
-		  cover: cover,
+		  cover: coverFileTempPath || cover,
 		  tocTitle: name,
 		  lang,
 		  appendChapterTitles: false,
@@ -351,6 +360,10 @@ function deleteFolderRecursive(path) {
         fs.rmdirSync(path);
     }
 };
+function getExtName(path) {
+	const matches = path && path.match(/\.([^.]+?)$/);
+	return matches && matches[1];
+}
 function UUID(options) {
   const { noDash } = options || {};
   const dashStr = noDash ? '' : '-';

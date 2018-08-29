@@ -1,3 +1,3 @@
 <div class="cover-page">
-	<img class="cover" src="{{ cover }}"/>
+	<img src="{{ cover }}"/>
 </div>
