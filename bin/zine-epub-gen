@@ -138,7 +138,7 @@ process.stdin.on('end', function () {
 				src: [],
 				job: []
 			},
-			contentCSS: requestBody('https://zine.la/p/c/article/Content/Content_fb058ab.css'),
+			contentCSS: requestBody('https://zine.la/p/c/article/Content/Content.css'),
 			contentList: []
 		};
 
@@ -177,7 +177,6 @@ process.stdin.on('end', function () {
 		loopList(inputData.children, 0, job.contentList);
 
 		if (hasSecondLevelArticle) {
-			console.log('has')
 			for (let i in job.contentList) {
 				const item = job.contentList[i];
 				const nextItem = job.contentList[parseInt(i, 0) + 1];
@@ -240,7 +239,7 @@ process.stdin.on('end', function () {
 		  	{ title: i18n[lang].author_page, data: authorPageContent, beforeToc: true }
 		  ],
 		  fonts: result.fonts.src,
-		  css: coverPageCSS + headPageCSS + copyrightPageCSS + authorPageCSS + backPageCSS + result.fonts.css + result.contentCSS
+		  css: coverPageCSS + headPageCSS + copyrightPageCSS + authorPageCSS + backPageCSS + result.fonts.css + result.contentCSS + '.content .title{left:0!important;width:100%!important}'
 		};
 
 		result.contentList.forEach((item) => {
@@ -319,8 +318,7 @@ function * requestBackgroundCSS(backgroundData, identity) {
 		returnStr = '';
 	}
 
-	const forceOverridePaddingCSSStr = '.content-' + identity + ' .title{left:0!important;width:100%!important}' + 
-	'.content-' + identity + ' img{left:0!important;width:100%!important}' + 
+	const forceOverridePaddingCSSStr = '.content-' + identity + ' img{left:0!important;width:100%!important}' + 
 	'.content-' + identity + '{padding-left:' + forceOverridePadding + '!important;padding-right:' + forceOverridePadding + '!important}';
 	return returnStr + forceOverridePaddingCSSStr;
 
