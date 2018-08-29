@@ -262,11 +262,7 @@ process.stdin.on('end', function () {
 
 
 		// console.log(JSON.stringify(option));
-		new Epub(option, outputPath).promise.then(function () {
-			deleteFolderRecursive(tempFilePath);
-		}, function () {
-			deleteFolderRecursive(tempFilePath);
-		});
+		new Epub(option, outputPath);
 	});
 });
 
@@ -323,7 +319,7 @@ function * requestBackgroundCSS(backgroundData, identity) {
 		returnStr = '';
 	}
 
-	const forceOverridePaddingCSSStr = '.title{left:0!important;width:100%!important}' + 
+	const forceOverridePaddingCSSStr = '.content-' + identity + ' .title{left:0!important;width:100%!important}' + 
 	'.content-' + identity + ' img{left:0!important;width:100%!important}' + 
 	'.content-' + identity + '{padding-left:' + forceOverridePadding + '!important;padding-right:' + forceOverridePadding + '!important}';
 	return returnStr + forceOverridePaddingCSSStr;
