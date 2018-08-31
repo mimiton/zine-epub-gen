@@ -19,6 +19,12 @@
 .author-page .column {
 	margin-top: 8px;
 }
+.author-page .bottom-line {
+	position: absolute;
+	bottom: 20px;
+	width: 100%;
+	margin: 0 20px;
+}
 .author-page .cover {
 	position: absolute;
 	bottom: 20px;

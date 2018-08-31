@@ -34,7 +34,7 @@ const i18n = {
 		"text_author": "作&nbsp;&nbsp;&nbsp;者",
 		"text_word_count": "字&nbsp;&nbsp;&nbsp;数",
 		"text_publisher": "出版方",
-		"scan_code_read_book": "扫码阅读本书更新",
+		"scan_code_read_book": "微信扫描小程序码<br>阅读内容更新",
 		"unknown": "未知"
 	},
 	"zh-tw": {
@@ -55,7 +55,7 @@ const i18n = {
 		"text_author": "作&nbsp;&nbsp;&nbsp;者",
 		"text_word_count": "字&nbsp;&nbsp;&nbsp;數",
 		"text_publisher": "出版方",
-		"scan_code_read_book": "掃碼閱讀本書更新",
+		"scan_code_read_book": "微信掃描小程序碼<br>閱讀內容更新",
 		"unknown": "未知"
 	},
 	"en": {
@@ -76,7 +76,7 @@ const i18n = {
 		"text_author": "Author&nbsp;&nbsp;&nbsp;&nbsp;",
 		"text_word_count": "Word count",
 		"text_publisher": "Publisher ",
-		"scan_code_read_book": "Scan QR-Code to read latest version of this book",
+		"scan_code_read_book": "Scan QR-Code in Wechat<br>to read latest version of this book",
 		"unknown": "Unknown"
 	}
 };
