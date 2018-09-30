@@ -19,34 +19,28 @@
 .author-page .column {
 	margin-top: 8px;
 }
-.author-page .bottom-line {
-	position: absolute;
-	bottom: 20px;
-	width: 100%;
-	margin: 0 20px;
-}
 .author-page .cover {
 	position: absolute;
 	bottom: 20px;
 	left: 20px;
 	width: 100px;
+	height: auto;
 	box-shadow: 0 3px 18px 0 rgba(0, 0, 0, 0.18);
 }
-.author-page .scan-code-read-book {
-	font-family: PingFangSC-Regular;
+.author-page .text {
+    position: absolute;
+    right: 68px;
+    bottom: 28px;
+    font-family: PingFangSC-Regular;
+    font-size: 10px;
+    color: #686868;
+    text-align: right;
+}
+.author-page .qr-code {
 	position: absolute;
 	bottom: 20px;
 	right: 0;
-	width: 60%;
-	height: 56px;
-	line-height: 56px;
-	font-size: 10px;
-	color: #686868;
-	text-align: right;
-}
-.author-page .scan-code-read-book > img {
+	display: block;
 	width: 56px;
 	height: 56px;
-	display: inline-block;
-	vertical-align: top;
 }
