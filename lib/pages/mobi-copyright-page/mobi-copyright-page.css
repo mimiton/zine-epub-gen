@@ -1,0 +1,69 @@
+.copyright-page {
+	font-family: SourceHanSerifSC-Regular;
+	font-size: 12px;
+}
+.copyright-page a {
+	color: black;
+}
+.copyright-page p {
+  text-indent: 0;
+}
+
+.author-page .author {
+	margin: 0 auto;
+	font-size: 13px;
+	font-weight: bold;
+}
+.author-page .description {
+	margin-top: 8px;
+}
+.author-page .column {
+	margin-top: 8px;
+}
+
+.copyright-page .copyright-info {
+	margin: 0 auto;
+	font-weight: bold;
+	font-size: 13px;
+	color: black;
+}
+.copyright-page .book-info {
+	margin: 18px auto 0;
+	color: black;
+	line-height: 20px;
+}
+.copyright-page .book-info > p {
+	margin: 0;
+}
+.copyright-page .copyright {
+	margin: 20px auto 0;
+	line-height: 20px;
+	color: black;
+}
+.copyright-page .title {
+	font-family: PingFangSC-Regular;
+	margin: 36px auto 0;
+	font-size: 13px;
+	font-weight: bold;
+	color: black;
+}
+.copyright-page .author {
+	margin: 20px auto 0!important;
+}
+.copyright-page .author,
+.copyright-page .word-count,
+.copyright-page .publisher {
+	margin: 0;
+	font-family: PingFangSC-Regular;
+	line-height: 20px;
+	color: black;
+}
+
+.copyright-page .zine-desc {
+	margin: 38px auto 0;
+	width: 100%;
+	font-family: PingFangSC-Regular;
+	font-size: 10px;
+	color: black;
+	line-height: 20px;
+}

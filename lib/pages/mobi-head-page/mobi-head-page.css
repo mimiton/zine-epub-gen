@@ -1,0 +1,29 @@
+.head-page {
+	font-family: PingFangSC-Regular;
+	min-height: 400px;
+}
+.head-page p {
+  text-indent: 0;
+}
+.head-page .title {
+	margin: 15% auto 0;
+	font-size: 26px;
+	color: black;
+	text-align: center;
+}
+.head-page .sub-title.no-heading {
+	display: none;
+}
+.head-page .sub-title {
+	margin: 16px auto 60px;
+	font-size: 14px;
+	color: black;
+	text-align: center;
+}
+
+.head-page .author {
+	margin: 20px auto 0;
+	font-size: 14px;
+	color: black;
+	text-align: center;
+}

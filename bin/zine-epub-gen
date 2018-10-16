@@ -13,6 +13,7 @@ const request = require("co-request");
 const argv = require('optimist').argv;
 const setTempFilePath = argv['t'];
 const outputPath = argv['o'];
+const forMobi = argv['m'];
 const lang = argv['l'] || 'zh-cn';
 
 const i18n = {
@@ -87,6 +88,11 @@ const tempFilePath = path.join(tempFilePathRoot, UUID({ noDash: true }) + '/');
 fs.mkdirSync(tempFilePath);
 
 const TOCTemplatePath = path.join(__dirname, '../lib/pages/TOC/toc.xhtml.ejs');
+const mobiCopyrightPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/mobi-copyright-page/mobi-copyright-page.tpl'));
+const mobiCopyrightPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/mobi-copyright-page/mobi-copyright-page.css'));
+const mobiHeadPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/mobi-head-page/mobi-head-page.tpl'));
+const mobiHeadPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/mobi-head-page/mobi-head-page.css'));
+
 const coverPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/cover-page/cover-page.tpl'));
 const coverPageCSS = fs.readFileSync(path.join(__dirname, '../lib/pages/cover-page/cover-page.css'));
 const headPageTPL = fs.readFileSync(path.join(__dirname, '../lib/pages/head-page/head-page.tpl'));
@@ -189,6 +195,39 @@ process.stdin.on('end', function () {
 		const result = yield job;
 
 		const date = new Date();
+		
+		let mobiHeadPageContent;
+		let mobiCopyrightPageContent;
+		if (forMobi) {
+      mobiHeadPageContent = mobiHeadPageTPL.toString()
+        .replace(/\{\{\stitle\s\}\}/g, name)
+        .replace(/\{\{\sno_heading\s\}\}/g, heading ? '' : 'no-heading')
+        .replace(/\{\{\sheading\s\}\}/g, heading || '')
+        .replace(/\{\{\sauthor\s\}\}/g, owner.username)
+        .replace(/\{\{\swrote\s\}\}/g, i18n[lang].wrote);
+      mobiCopyrightPageContent = mobiCopyrightPageTPL.toString()
+        .replace(/\{\{\sauthor\s\}\}/g, owner.username)
+        .replace(/\{\{\sdescription\s\}\}/g, owner.description || '')
+        .replace(/\{\{\sauthor_column\s\}\}/g, i18n[lang].author_column)
+        .replace(/\{\{\scolumn_link\s\}\}/g, decodeURIComponent(owner.column_url))
+        .replace(/\{\{\swrote\s\}\}/g, i18n[lang].wrote_1)
+        .replace(/\{\{\scopyright_info\s\}\}/g, i18n[lang].copyright_info)
+        .replace(/\{\{\spublish_by_zine\s\}\}/g, i18n[lang].publish_by_zine)
+        .replace(/\{\{\syear_date\s\}\}/g, date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate())
+        .replace(/\{\{\sauthor_column\s\}\}/g, i18n[lang].author_column)
+        .replace(/\{\{\scolumn_link\s\}\}/g, decodeURIComponent(owner.column_url))
+        .replace(/\{\{\stitle\s\}\}/g, name)
+        .replace(/\{\{\sauthor\s\}\}/g, owner.username)
+        .replace(/\{\{\sword_count\s\}\}/g, word_count ? word_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : i18n[lang].unknown)
+        .replace(/\{\{\scopyright\s\}\}/g, i18n[lang].copyright)
+        .replace(/\{\{\scolon\s\}\}/g, i18n[lang].colon)
+        .replace(/\{\{\scomma\s\}\}/g, i18n[lang].comma)
+        .replace(/\{\{\stext_author\s\}\}/g, i18n[lang].text_author)
+        .replace(/\{\{\stext_word_count\s\}\}/g, i18n[lang].text_word_count)
+        .replace(/\{\{\stext_publisher\s\}\}/g, i18n[lang].text_publisher)
+        .replace(/\{\{\szine_desc\s\}\}/g, i18n[lang].zine_desc);
+		}
+		
 		const coverPageContent = coverPageTPL.toString()
 			.replace(/\{\{\scover\s\}\}/g, coverCutted);
 		const headPageContent = headPageTPL.toString()
@@ -224,6 +263,21 @@ process.stdin.on('end', function () {
 			.replace(/\{\{\sqr_code_url\s\}\}/g, wx_mini_program_qr_code)
 			.replace(/\{\{\sscan_code_read_book\s\}\}/g, i18n[lang].scan_code_read_book);
 
+    const contentArray = [];
+    let cssStr = '';
+    if (forMobi) {
+      contentArray.push({ title: i18n[lang].head_page, data: mobiHeadPageContent, beforeToc: true });
+      contentArray.push({ title: i18n[lang].copyright_page, data: mobiCopyrightPageContent, beforeToc: true });
+      cssStr += mobiHeadPageCSS + mobiCopyrightPageCSS;
+    }
+    else {
+      contentArray.push({ title: i18n[lang].cover, data: coverPageContent, beforeToc: true });
+      contentArray.push({ title: i18n[lang].head_page, data: headPageContent, beforeToc: true });
+      contentArray.push({ title: i18n[lang].copyright_page, data: copyrightPageContent, beforeToc: true });
+      contentArray.push({ title: i18n[lang].author_page, data: authorPageContent, beforeToc: true });
+      cssStr += coverPageCSS + headPageCSS + copyrightPageCSS + authorPageCSS;
+    }
+
 		const option = {
 		  title: name,
 		  author: owner.username,
@@ -232,14 +286,9 @@ process.stdin.on('end', function () {
 		  lang,
 		  appendChapterTitles: false,
 		  customHtmlTocTemplatePath: TOCTemplatePath,
-		  content: [
-		  	{ title: i18n[lang].cover, data: coverPageContent, beforeToc: true },
-		  	{ title: i18n[lang].head_page, data: headPageContent, beforeToc: true },
-		  	{ title: i18n[lang].copyright_page, data: copyrightPageContent, beforeToc: true },
-		  	{ title: i18n[lang].author_page, data: authorPageContent, beforeToc: true }
-		  ],
+		  content: contentArray,
 		  fonts: result.fonts.src,
-		  css: coverPageCSS + headPageCSS + copyrightPageCSS + authorPageCSS + backPageCSS + result.fonts.css + result.contentCSS + '.content .title{left:0!important;width:100%!important}'
+		  css: cssStr + result.fonts.css + result.contentCSS + '.content .title{left:0!important;width:100%!important}'
 		};
 
 		result.contentList.forEach((item) => {
@@ -253,11 +302,14 @@ process.stdin.on('end', function () {
 			option.css += item.contentAndTheme.css + item.backgroundCSS
 		});
 
-		option.content.push({
-			title: i18n[lang].back_page,
-			data: backPageTPL,
-			excludeFromMenu: true
-	  	});
+    if (!forMobi) {
+      option.content.push({
+        title: i18n[lang].back_page,
+        data: backPageTPL,
+        excludeFromMenu: true
+      });
+      option.css += backPageCSS;
+    }
 
 
 		// console.log(JSON.stringify(option));
