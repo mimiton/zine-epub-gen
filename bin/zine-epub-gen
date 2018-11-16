@@ -312,7 +312,6 @@ process.stdin.on('end', function () {
 		}
 		else {
 			option.css = removeFontSize(option.css)
-			console.log(option.css)
 		}
 
 		// console.log(JSON.stringify(option));
