@@ -130,7 +130,6 @@ process.stdin.on('end', function () {
 		return;
 	}
 	co(function* () {
-		let hasSecondLevelArticle;
 		const { slug, owner, name, heading, description, cover, fonts, word_count, wx_mini_program_qr_code } = inputData;
 
 		const extName = getExtName(cover);
@@ -159,10 +158,10 @@ process.stdin.on('end', function () {
 		}
 
 		function loopList (list, depth, target) {
-			if (depth > 0) {
-				hasSecondLevelArticle = true;
-			}
 			list.forEach((item, index) => {
+				if (!item.detail) {
+					return;
+				}
 				const identity = depth + '-' + index;
 				item.detail = item.detail || {};
 				const title = item.detail.name || item.detail.title;
@@ -181,16 +180,6 @@ process.stdin.on('end', function () {
 		}
 
 		loopList(inputData.children, 0, job.contentList);
-
-		if (hasSecondLevelArticle) {
-			for (let i in job.contentList) {
-				const item = job.contentList[i];
-				const nextItem = job.contentList[parseInt(i, 0) + 1];
-				if (item.depth === 0 && nextItem && nextItem.depth === 0) {
-					item.depth = 1;
-				}
-			}
-		}
 
 		const result = yield job;
 
