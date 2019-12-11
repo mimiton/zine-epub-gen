@@ -333,7 +333,12 @@ function * requestThemeCSS(title, content, cssURL, identity) {
 		    const imgURL = imgURLMatches && imgURLMatches[1];
 		    $titleImg.after($('<img class="title-img" src="' + imgURL + '"/>'));
 		    $titleImg.remove();
-		}
+		  }
+		  $('zine-photo,zine-title-image').each((i, item) => {
+        const $item = $(item)
+        $item.after('<p><img src="' + $item.attr('src') + '"/></p>')
+        $item.remove()
+      })
 	    content = $.html()
 	}
 	return {
